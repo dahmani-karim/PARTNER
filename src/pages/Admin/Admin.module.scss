@@ -1,0 +1,428 @@
+@use '../../styles/variables.scss' as *;
+
+.adminPage {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  margin-bottom: $spacing-xl;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+
+  h1 {
+    font-size: $font-size-2xl;
+    margin-bottom: $spacing-xs;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    font-size: $font-size-sm;
+  }
+}
+
+// ─── STATS GRID ───
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  text-align: center;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: var(--color-primary-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .statValue {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    font-family: $font-family-sans;
+    line-height: 1;
+    margin-bottom: $spacing-xs;
+  }
+
+  .statLabel {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+  }
+
+  &.gold .statValue {
+    background: linear-gradient(135deg, #D4AF37, #F5D061);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &.green .statValue {
+    color: var(--color-success);
+  }
+
+  &.orange .statValue {
+    color: var(--color-warning);
+  }
+
+  &.red .statValue {
+    color: var(--color-danger);
+  }
+
+  &.blue .statValue {
+    color: var(--color-info);
+  }
+}
+
+// ─── NAV LINKS ───
+.navGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.navCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-xl;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: $radius-lg;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: var(--color-text);
+  }
+
+  .navIcon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-md;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .navTitle {
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
+  }
+
+  .navDesc {
+    font-size: $font-size-xs;
+    color: var(--color-text-secondary);
+    margin-top: 2px;
+  }
+
+  .navBadge {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+  }
+}
+
+// ─── TABLE ───
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.tableHead {
+  th {
+    padding: $spacing-md $spacing-lg;
+    background: var(--color-surface-alt);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-secondary);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+}
+
+.tableBody {
+  td {
+    padding: $spacing-md $spacing-lg;
+    font-size: $font-size-sm;
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover {
+    background: var(--color-surface-hover);
+  }
+}
+
+.userName {
+  font-weight: $font-weight-medium;
+}
+
+.userEmail {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+// ─── ACTION BUTTONS ───
+.actionBtns {
+  display: flex;
+  gap: $spacing-xs;
+  flex-wrap: wrap;
+}
+
+.btnApprove {
+  padding: 6px 14px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--color-success);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--color-success);
+    color: white;
+  }
+}
+
+.btnReject {
+  padding: 6px 14px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--color-danger);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--color-danger);
+    color: white;
+  }
+}
+
+.btnWarning {
+  padding: 6px 14px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--color-warning);
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--color-warning);
+    color: white;
+  }
+}
+
+.btnNeutral {
+  padding: 6px 14px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: var(--color-text-secondary);
+    color: var(--color-text);
+  }
+}
+
+// ─── FILTERS ───
+.filters {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 6px 14px;
+  border-radius: $radius-full;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: var(--color-primary-border);
+  }
+
+  &.active {
+    background: var(--color-primary-bg);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+    font-weight: $font-weight-medium;
+  }
+}
+
+// ─── MODAL ───
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: $spacing-lg;
+}
+
+.modal {
+  background: var(--color-surface);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+
+  h3 {
+    font-size: $font-size-lg;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.modalField {
+  margin-bottom: $spacing-md;
+}
+
+.modalLabel {
+  display: block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  margin-bottom: $spacing-xs;
+}
+
+.modalTextarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-family: $font-family-body;
+  resize: vertical;
+  min-height: 80px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}
+
+.modalSelect {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+}
+
+// ─── RESPONSIVE TABLE ───
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: $radius-lg;
+  border: 1px solid var(--color-border);
+
+  .table {
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.videoLink {
+  color: var(--color-primary-dark);
+  font-size: $font-size-xs;
+  word-break: break-all;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: $spacing-3xl;
+  color: var(--color-text-secondary);
+
+  .emptyIcon {
+    font-size: 3rem;
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    font-size: $font-size-sm;
+  }
+}
+
+.scoreInput {
+  width: 70px;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  text-align: center;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+}

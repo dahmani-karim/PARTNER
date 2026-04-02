@@ -1,0 +1,293 @@
+@use '../../styles/variables.scss' as *;
+
+.dashboard {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  margin-bottom: $spacing-xl;
+
+  h1 {
+    font-size: $font-size-2xl;
+    margin-bottom: $spacing-xs;
+
+    span {
+      background: linear-gradient(135deg, #D4AF37, #F5D061);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: var(--color-text-secondary);
+  }
+}
+
+// ─── Empty state ───
+.emptyState {
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  padding: $spacing-3xl $spacing-xl;
+
+  .emptyIcon {
+    font-size: 3rem;
+    margin-bottom: $spacing-md;
+  }
+
+  h2 {
+    font-size: $font-size-xl;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    font-size: $font-size-sm;
+    max-width: 480px;
+    margin: 0 auto $spacing-xl;
+    line-height: 1.6;
+  }
+}
+
+// ─── Warning banner ───
+.warningBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--color-warning-bg);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-xl;
+  font-size: $font-size-sm;
+  line-height: 1.5;
+}
+
+.warningIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+// ─── Status card ───
+.statusCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+}
+
+.statusHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.statusTitle {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.appTag {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: 4px 12px;
+  border-radius: $radius-full;
+  background: var(--color-surface-alt);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--color-text-secondary);
+}
+
+// ─── Stats grid ───
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.stat {
+  text-align: center;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border-light);
+
+  &.gold .statValue {
+    background: linear-gradient(135deg, #D4AF37, #F5D061);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &.green .statValue {
+    color: var(--color-success);
+  }
+
+  &.red .statValue {
+    color: var(--color-danger);
+  }
+}
+
+.statValue {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  font-family: $font-family-sans;
+  line-height: 1;
+  margin-bottom: $spacing-xs;
+}
+
+.statLabel {
+  font-size: $font-size-xs;
+  color: var(--color-text-secondary);
+}
+
+// ─── Progress bar ───
+.progressSection {
+  margin-bottom: $spacing-xl;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.progressCount {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.progressTarget {
+  font-size: $font-size-sm;
+  color: var(--color-text-secondary);
+}
+
+.progressBar {
+  height: 8px;
+  border-radius: $radius-full;
+  background: var(--color-surface-alt);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: $radius-full;
+  background: linear-gradient(135deg, #D4AF37, #F5D061);
+  transition: width 0.6s ease;
+
+  &.complete {
+    background: var(--color-success);
+  }
+
+  &.warning {
+    background: var(--color-warning);
+  }
+}
+
+// ─── Action buttons ───
+.actions {
+  display: flex;
+  gap: $spacing-md;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 12px 24px;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  text-decoration: none;
+  transition: all $transition-base;
+  cursor: pointer;
+
+  &.primary {
+    background: linear-gradient(135deg, #D4AF37, #F5D061);
+    color: #1a1a1a;
+    border: none;
+
+    &:hover {
+      box-shadow: var(--shadow-gold);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+
+    &:hover {
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+// ─── Recent videos ───
+.recentSection {
+  margin-top: $spacing-xl;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.videoList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.videoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: $radius-md;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: var(--color-primary-border);
+  }
+}
+
+.videoInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.videoTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.videoMeta {
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}

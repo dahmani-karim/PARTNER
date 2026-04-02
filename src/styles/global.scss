@@ -1,0 +1,100 @@
+@use './variables.scss' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-family-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-sans;
+  font-weight: $font-weight-semibold;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-primary-dark);
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+button {
+  cursor: pointer;
+  font-family: $font-family-sans;
+}
+
+input, textarea, select {
+  font-family: $font-family-body;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: $radius-full;
+
+  &:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+// Utility classes
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @media (max-width: $bp-md) {
+    padding: 0 $spacing-md;
+  }
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #D4AF37 0%, #F5D061 50%, #D4AF37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
