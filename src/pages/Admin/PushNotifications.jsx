@@ -14,10 +14,68 @@ const APPS = [
   { value: 'partner', label: 'Partner' },
 ];
 
+const APP_URLS = {
+  smartcellar: [
+    { value: '/dashboard', label: 'Tableau de bord' },
+    { value: '/stock', label: 'Stock / Inventaire' },
+    { value: '/recette', label: 'Recettes' },
+    { value: '/meal-plan', label: 'Planification repas' },
+    { value: '/course', label: 'Liste de courses' },
+    { value: '/scan', label: 'Scanner' },
+    { value: '/household', label: 'Foyer' },
+    { value: '/notification-history', label: 'Historique notifications' },
+    { value: '/settings', label: 'Paramètres' },
+    { value: '/profile', label: 'Profil' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+  progarden: [
+    { value: '/dashboard', label: 'Dashboard' },
+    { value: '/garden', label: 'Éditeur jardin' },
+    { value: '/calendar', label: 'Calendrier' },
+    { value: '/plants', label: 'Catalogue plantes' },
+    { value: '/seedbox', label: 'Grainothèque' },
+    { value: '/observations', label: 'Observations' },
+    { value: '/soil', label: 'Analyse sol' },
+    { value: '/settings', label: 'Paramètres' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+  farmly: [
+    { value: '/dashboard', label: 'Dashboard' },
+    { value: '/animals', label: 'Animaux' },
+    { value: '/settings', label: 'Paramètres' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+  lynx: [
+    { value: '/dashboard', label: 'Dashboard' },
+    { value: '/map', label: 'Carte' },
+    { value: '/alerts', label: 'Alertes' },
+    { value: '/stats', label: 'Statistiques' },
+    { value: '/energy', label: 'Prix énergie' },
+    { value: '/blackout', label: 'Coupures' },
+    { value: '/analysis', label: 'Analyse' },
+    { value: '/settings', label: 'Paramètres' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+  prete: [
+    { value: '/dashboard', label: 'Dashboard' },
+    { value: '/scenarios', label: 'Scénarios' },
+    { value: '/exercices', label: 'Exercices' },
+    { value: '/terrain', label: 'Terrain' },
+    { value: '/profile', label: 'Profil' },
+    { value: '/gamification', label: 'Gamification' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+  partner: [
+    { value: '/dashboard', label: 'Dashboard' },
+    { value: '/profile', label: 'Profil' },
+    { value: 'custom', label: 'URL personnalisée' },
+  ],
+};
+
 const PushNotifications = () => {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
-  const [form, setForm] = useState({ title: '', body: '', icon: '🔔', app: '', targetAudience: 'all' });
+  const [form, setForm] = useState({ title: '', body: '', icon: '🔔', app: '', targetAudience: 'all', url: '/', urlType: '/' });
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -66,6 +124,7 @@ const PushNotifications = () => {
           title: form.title,
           body: form.body,
           icon: form.icon,
+          data: form.app ? { url: form.url || '/' } : undefined,
           app: form.app || undefined,
           targetAudience: form.targetAudience,
           targetUserIds: form.targetAudience === 'specific' ? selectedUsers.map((u) => u.id) : undefined,
@@ -74,7 +133,7 @@ const PushNotifications = () => {
       if (!res.ok) throw new Error();
       const result = await res.json();
       setHistory([{ ...form, sentAt: new Date().toISOString(), ...result }, ...history]);
-      setForm({ title: '', body: '', icon: '🔔', app: form.app, targetAudience: 'all' });
+      setForm({ title: '', body: '', icon: '🔔', app: form.app, targetAudience: 'all', url: '/', urlType: '/' });
       setSelectedUsers([]);
       setSearchQuery('');
       alert(`Envoyé : ${result.successCount} réussi(s), ${result.failureCount} échoué(s)`);
@@ -131,10 +190,26 @@ const PushNotifications = () => {
         {/* App filter */}
         <div className={styles.formGroup}>
           <label>Application cible</label>
-          <select value={form.app} onChange={(e) => setForm({ ...form, app: e.target.value })}>
+          <select value={form.app} onChange={(e) => setForm({ ...form, app: e.target.value, url: '/', urlType: '/' })}>
             {APPS.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
           </select>
         </div>
+
+        {form.app && APP_URLS[form.app] && (
+          <div className={styles.formGroup}>
+            <label>URL de destination</label>
+            <select value={form.urlType} onChange={(e) => { const v = e.target.value; setForm({ ...form, urlType: v, url: v === 'custom' ? '' : v }); }}>
+              {APP_URLS[form.app].map((u) => <option key={u.value} value={u.value}>{u.label}</option>)}
+            </select>
+          </div>
+        )}
+
+        {form.urlType === 'custom' && form.app && (
+          <div className={styles.formGroup}>
+            <label>URL personnalisée</label>
+            <input type="text" value={form.url} onChange={(e) => setForm({ ...form, url: e.target.value })} placeholder="/ma-page" />
+          </div>
+        )}
 
         {/* Audience */}
         <div className={styles.formGroup}>
