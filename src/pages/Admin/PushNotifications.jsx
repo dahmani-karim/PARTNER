@@ -16,6 +16,7 @@ const APPS = [
 
 const PushNotifications = () => {
   const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
   const [form, setForm] = useState({ title: '', body: '', icon: '🔔', app: '', targetAudience: 'all' });
   const [sending, setSending] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,6 +93,10 @@ const PushNotifications = () => {
       alert('Notification de test envoyée');
     } catch { alert('Erreur test'); }
   };
+
+  if (!user || user.id !== 1) {
+    return <div className={styles.pushPage}><h1>🔒 Accès refusé</h1><p>Seul l'administrateur peut accéder à cette page.</p></div>;
+  }
 
   return (
     <div className={styles.pushPage}>
@@ -197,7 +202,10 @@ const PushNotifications = () => {
           {history.map((h, i) => (
             <div key={i} className={styles.historyItem}>
               <span>{h.icon} <strong>{h.title}</strong></span>
-              <small>{new Date(h.sentAt).toLocaleTimeString('fr-FR')} — {h.successCount || 0} envoyé(s)</small>
+              <div className={styles.historyActions}>
+                <small>{new Date(h.sentAt).toLocaleTimeString('fr-FR')} — {h.successCount || 0} envoyé(s)</small>
+                <button className={styles.historyDelete} onClick={() => setHistory(prev => prev.filter((_, idx) => idx !== i))} title="Supprimer">🗑️</button>
+              </div>
             </div>
           ))}
         </div>

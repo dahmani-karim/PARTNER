@@ -628,3 +628,21 @@
   &:last-child { border-bottom: none; }
   small { color: var(--color-text-muted); }
 }
+
+.historyActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.historyDelete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+  &:hover { opacity: 1; }
+}
