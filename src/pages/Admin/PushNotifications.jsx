@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useAuthStore from '../../stores/authStore';
 import { API_URL } from '../../config/api';
 import styles from './Admin.module.scss';
@@ -83,6 +83,27 @@ const PushNotifications = () => {
   const [searching, setSearching] = useState(false);
   const [history, setHistory] = useState([]);
 
+  const fetchAdminHistory = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/notifications/push/history`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setHistory(await res.json());
+    } catch (e) { console.error('Erreur chargement historique:', e); }
+  }, [token]);
+
+  useEffect(() => { if (token) fetchAdminHistory(); }, [token, fetchAdminHistory]);
+
+  const deleteAdminHistoryItem = async (id) => {
+    try {
+      await fetch(`${API_URL}/api/admin/notifications/push/history/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setHistory(prev => prev.filter(h => h.id !== id));
+    } catch (e) { console.error('Erreur suppression:', e); }
+  };
+
   const searchUsers = async (query) => {
     setSearchQuery(query);
     if (query.length < 2) { setSearchResults([]); return; }
@@ -132,7 +153,7 @@ const PushNotifications = () => {
       });
       if (!res.ok) throw new Error();
       const result = await res.json();
-      setHistory([{ ...form, sentAt: new Date().toISOString(), ...result }, ...history]);
+      await fetchAdminHistory();
       setForm({ title: '', body: '', icon: '🔔', app: form.app, targetAudience: 'all', url: '/', urlType: '/' });
       setSelectedUsers([]);
       setSearchQuery('');
@@ -273,13 +294,13 @@ const PushNotifications = () => {
       {/* History */}
       {history.length > 0 && (
         <div className={styles.pushHistory}>
-          <h2>Historique de cette session</h2>
-          {history.map((h, i) => (
-            <div key={i} className={styles.historyItem}>
+          <h2>Historique des notifications</h2>
+          {history.map((h) => (
+            <div key={h.id} className={styles.historyItem}>
               <span>{h.icon} <strong>{h.title}</strong></span>
               <div className={styles.historyActions}>
-                <small>{new Date(h.sentAt).toLocaleTimeString('fr-FR')} — {h.successCount || 0} envoyé(s)</small>
-                <button className={styles.historyDelete} onClick={() => setHistory(prev => prev.filter((_, idx) => idx !== i))} title="Supprimer">🗑️</button>
+                <small>{new Date(h.createdAt).toLocaleString('fr-FR')} — {h.app || 'toutes'}</small>
+                <button className={styles.historyDelete} onClick={() => deleteAdminHistoryItem(h.id)} title="Supprimer">🗑️</button>
               </div>
             </div>
           ))}
