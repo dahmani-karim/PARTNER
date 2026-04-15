@@ -23,6 +23,7 @@ import AdminDashboard from './pages/Admin/AdminDashboard';
 import ApplicationReview from './pages/Admin/ApplicationReview';
 import VideoValidation from './pages/Admin/VideoValidation';
 import PartnerManagement from './pages/Admin/PartnerManagement';
+import PushNotifications from './pages/Admin/PushNotifications';
 
 // 404
 import NotFound from './pages/NotFound/NotFound';
@@ -81,6 +82,7 @@ function App() {
           <Route path="/admin/applications" element={<AdminRoute><ApplicationReview /></AdminRoute>} />
           <Route path="/admin/videos" element={<AdminRoute><VideoValidation /></AdminRoute>} />
           <Route path="/admin/partners" element={<AdminRoute><PartnerManagement /></AdminRoute>} />
+            <Route path="/admin/notifications" element={<AdminRoute><PushNotifications /></AdminRoute>} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileVideo, Send, User, Shield, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileVideo, Send, User, Shield, Bell, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '../../stores/authStore';
 import styles from './Navbar.module.scss';
@@ -26,6 +26,7 @@ const Navbar = () => {
 
   const adminItems = [
     { to: '/admin', icon: <Shield size={18} />, label: 'Admin' },
+    { to: '/admin/notifications', icon: <Bell size={18} />, label: 'Push' },
   ];
 
   const renderLinks = (items) =>

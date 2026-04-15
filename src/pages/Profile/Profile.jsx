@@ -1,12 +1,35 @@
+import { useState, useEffect } from 'react';
 import useAuthStore from '../../stores/authStore';
 import usePartnerStore from '../../stores/partnerStore';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
 import { APPS, PLATFORMS } from '../../config/apps';
+import { EcosystemPush } from '../../services/EcosystemPushService';
+import { API_URL } from '../../config/api';
 import styles from './Profile.module.scss';
 
 const Profile = () => {
   const user = useAuthStore((s) => s.user);
   const { partner, application } = usePartnerStore();
+
+  // ─── Push Notifications ───────────────────────────────────
+  const [pushSubscribed, setPushSubscribed] = useState(false);
+  const [pushLoading, setPushLoading] = useState(false);
+  const [notifHistory, setNotifHistory] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const [pushService] = useState(() =>
+    new EcosystemPush('partner', API_URL, () => localStorage.getItem('partner-token'))
+  );
+
+  useEffect(() => {
+    if (EcosystemPush.isSupported()) {
+      pushService.isSubscribed().then(setPushSubscribed);
+      pushService.getHistory(1, 20).then((data) => {
+        setNotifHistory(data.notifications || []);
+        setUnreadCount(data.unread || 0);
+      }).catch(() => {});
+    }
+  }, [pushService]);
 
   return (
     <div className={styles.profilePage}>
@@ -98,6 +121,82 @@ const Profile = () => {
           </div>
         </div>
       )}
+
+      {/* Notifications Push */}
+      <div className={styles.card}>
+        <h2 className={styles.cardTitle}>
+          🔔 Notifications {unreadCount > 0 && <span className={styles.badge}>{unreadCount}</span>}
+        </h2>
+
+        {EcosystemPush.getPermission() === 'denied' && (
+          <div className={styles.warning}>
+            Les notifications sont bloquées. Modifiez les paramètres de votre navigateur pour les activer.
+          </div>
+        )}
+
+        <div className={styles.row}>
+          <span className={styles.rowLabel}>Notifications Push</span>
+          <button
+            disabled={pushLoading || !EcosystemPush.isSupported()}
+            className={`${styles.toggle} ${pushSubscribed ? styles.toggleOn : ''}`}
+            onClick={async () => {
+              setPushLoading(true);
+              try {
+                if (pushSubscribed) {
+                  await pushService.unsubscribe();
+                  setPushSubscribed(false);
+                } else {
+                  await pushService.subscribe();
+                  setPushSubscribed(true);
+                }
+              } catch (err) { console.error(err); }
+              setPushLoading(false);
+            }}
+          >
+            <span className={styles.toggleKnob} />
+          </button>
+        </div>
+
+        {pushSubscribed && (
+          <div className={styles.pushActions}>
+            <button
+              className={styles.btnSecondary}
+              onClick={async () => {
+                try { await pushService.sendTest('Test Partner', 'Notification de test Partner'); }
+                catch (err) { console.error(err); }
+              }}
+            >
+              Tester
+            </button>
+            {unreadCount > 0 && (
+              <button
+                className={styles.btnSecondary}
+                onClick={async () => {
+                  await pushService.markRead();
+                  setNotifHistory((h) => h.map((n) => ({ ...n, read: true })));
+                  setUnreadCount(0);
+                }}
+              >
+                Tout marquer lu
+              </button>
+            )}
+          </div>
+        )}
+
+        {notifHistory.length > 0 && (
+          <div className={styles.notifHistory}>
+            {notifHistory.slice(0, 5).map((n) => (
+              <div key={n.id} className={`${styles.notifItem} ${n.read ? styles.read : styles.unread}`}>
+                <div>
+                  <strong>{n.title}</strong>
+                  <p>{n.body}</p>
+                </div>
+                <small>{new Date(n.sentAt || n.createdAt).toLocaleDateString('fr-FR')}</small>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
