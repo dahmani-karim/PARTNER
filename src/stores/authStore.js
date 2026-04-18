@@ -57,7 +57,7 @@ const useAuthStore = create(
       clearError: () => set({ error: null }),
 
       get isAdmin() {
-        return get().user?.partnerAdmin === true;
+        return get().user?.id === 1;
       },
     }),
     {

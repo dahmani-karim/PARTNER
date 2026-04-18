@@ -15,7 +15,7 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const isAdmin = user?.partnerAdmin;
+  const isAdmin = user?.id === 1;
 
   const navItems = [
     { to: '/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },

@@ -54,7 +54,7 @@ const Profile = () => {
             {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('fr-FR') : '—'}
           </span>
         </div>
-        {user?.partnerAdmin && (
+        {user?.id === 1 && (
           <div className={styles.row}>
             <span className={styles.rowLabel}>Rôle</span>
             <span className={styles.premiumBadge}>👑 Administrateur Partner</span>
