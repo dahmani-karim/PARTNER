@@ -42,6 +42,12 @@ const ProtectedRoute = ({ children }) => {
 
 const AdminRoute = ({ children }) => {
   const user = useAuthStore((s) => s.user);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
+  // Wait for user data to load before deciding
+  if (isAuthenticated && !user) {
+    return null;
+  }
 
   if (Number(user?.id) !== 1) {
     return <Navigate to="/dashboard" replace />;
