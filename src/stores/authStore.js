@@ -57,7 +57,7 @@ const useAuthStore = create(
       clearError: () => set({ error: null }),
 
       get isAdmin() {
-        return get().user?.id === 1;
+        return Number(get().user?.id) === 1;
       },
     }),
     {

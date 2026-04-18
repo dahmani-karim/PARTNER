@@ -43,7 +43,7 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const user = useAuthStore((s) => s.user);
 
-  if (user?.id !== 1) {
+  if (Number(user?.id) !== 1) {
     return <Navigate to="/dashboard" replace />;
   }
   return children;
