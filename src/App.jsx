@@ -24,6 +24,8 @@ import ApplicationReview from './pages/Admin/ApplicationReview';
 import VideoValidation from './pages/Admin/VideoValidation';
 import PartnerManagement from './pages/Admin/PartnerManagement';
 import PushNotifications from './pages/Admin/PushNotifications';
+import UserList from './pages/Admin/UserList';
+import UserDetail from './pages/Admin/UserDetail';
 
 // 404
 import NotFound from './pages/NotFound/NotFound';
@@ -41,7 +43,7 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const user = useAuthStore((s) => s.user);
 
-  if (!user?.partnerAdmin) {
+  if (user?.id !== 1) {
     return <Navigate to="/dashboard" replace />;
   }
   return children;
@@ -83,6 +85,8 @@ function App() {
           <Route path="/admin/videos" element={<AdminRoute><VideoValidation /></AdminRoute>} />
           <Route path="/admin/partners" element={<AdminRoute><PartnerManagement /></AdminRoute>} />
             <Route path="/admin/notifications" element={<AdminRoute><PushNotifications /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UserList /></AdminRoute>} />
+          <Route path="/admin/users/:id" element={<AdminRoute><UserDetail /></AdminRoute>} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

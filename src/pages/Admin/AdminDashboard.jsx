@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, FileVideo, Users } from 'lucide-react';
+import { FileText, FileVideo, Users, UserCog } from 'lucide-react';
 import usePartnerStore from '../../stores/partnerStore';
 import styles from './Admin.module.scss';
 
@@ -83,6 +83,16 @@ const AdminDashboard = () => {
           <div>
             <div className={styles.navTitle}>Partners</div>
             <div className={styles.navDesc}>Gérer les ambassadeurs et leurs statuts</div>
+          </div>
+        </Link>
+
+        <Link to="/admin/users" className={styles.navCard}>
+          <div className={styles.navIcon} style={{ background: 'var(--color-info-bg)' }}>
+            <UserCog size={24} />
+          </div>
+          <div>
+            <div className={styles.navTitle}>Utilisateurs</div>
+            <div className={styles.navDesc}>Gérer tous les utilisateurs de l'écosystème</div>
           </div>
         </Link>
       </div>
