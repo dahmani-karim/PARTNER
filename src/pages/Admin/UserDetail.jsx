@@ -28,7 +28,7 @@ const UserDetail = () => {
   const fetchUser = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/admin/users/${id}`);
+      const res = await api.get(`/api/admin/users/${id}`);
       setUser(res.data);
     } catch (err) {
       console.error('Erreur chargement utilisateur:', err);
@@ -47,10 +47,10 @@ const UserDetail = () => {
 
     setActionLoading(true);
     try {
-      if (action === 'block') await api.put(`/admin/users/${id}/block`);
-      else if (action === 'unblock') await api.put(`/admin/users/${id}/unblock`);
+      if (action === 'block') await api.put(`/api/admin/users/${id}/block`);
+      else if (action === 'unblock') await api.put(`/api/admin/users/${id}/unblock`);
       else if (action === 'delete') {
-        await api.delete(`/admin/users/${id}`);
+        await api.delete(`/api/admin/users/${id}`);
         navigate('/admin/users');
         return;
       }
@@ -66,7 +66,7 @@ const UserDetail = () => {
   const handleToggle = async (field) => {
     setActionLoading(true);
     try {
-      await api.put(`/admin/users/${id}/${field}`);
+      await api.put(`/api/admin/users/${id}/${field}`);
       fetchUser();
     } catch (err) {
       console.error('Erreur toggle:', err);

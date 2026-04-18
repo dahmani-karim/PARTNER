@@ -17,7 +17,7 @@ const UserList = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/admin/users');
+      const res = await api.get('/api/admin/users');
       setUsers(res.data);
     } catch (err) {
       console.error('Erreur chargement utilisateurs:', err);
