@@ -39,6 +39,22 @@ export const APPS = {
     color: '#6B8E7A',
     icon: '🧠',
   },
+  herbogenius: {
+    id: 'herbogenius',
+    name: 'HerboGenius',
+    description: 'Encyclopédie des plantes, cueillette sauvage et phytothérapie',
+    url: 'https://www.herbogenius.fr',
+    color: '#16A34A',
+    icon: '🌿',
+  },
+  primal: {
+    id: 'primal',
+    name: 'PRIMAL',
+    description: 'Préparation physique opérationnelle terrain',
+    url: 'https://primal.lacavernedurefractaire.fr',
+    color: '#DC2626',
+    icon: '💪',
+  },
 };
 
 export const PLATFORMS = {

@@ -80,6 +80,48 @@
   color: var(--color-info);
 }
 
+// ─── SUBSCRIPTION CELL ───
+.subCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.badgeFreemium {
+  @extend .badgeActive;
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+}
+
+.badgePartner {
+  @extend .badgeActive;
+  background: rgba(212, 175, 55, 0.15);
+  color: #B8860B;
+}
+
+.appChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.chipPremium {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: $radius-sm;
+  font-size: 10px;
+  font-weight: $font-weight-semibold;
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  letter-spacing: 0.02em;
+}
+
+.chipVip {
+  @extend .chipPremium;
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
 // ─── USER DETAIL HEADER ───
 .backBtn {
   display: inline-flex;

@@ -4,6 +4,26 @@ import { FileText, FileVideo, Users, UserCog } from 'lucide-react';
 import usePartnerStore from '../../stores/partnerStore';
 import styles from './Admin.module.scss';
 
+const APP_LABELS = {
+  smartcellar: '🍷 SmartCellar',
+  progarden: '🌱 ProGarden',
+  farmly: '🐔 Farmly',
+  prete: '🏠 PRET·E',
+  lynx: '🎵 LYNX',
+  herbogenius: '🌿 HerboGenius',
+  primal: '💪 PRIMAL',
+};
+
+const APP_COLORS = {
+  smartcellar: '#7C3AED',
+  progarden: '#16A34A',
+  farmly: '#B45309',
+  prete: '#0284C7',
+  lynx: '#EC4899',
+  herbogenius: '#15803D',
+  primal: '#DC2626',
+};
+
 const AdminDashboard = () => {
   const { stats, loadStats } = usePartnerStore();
 
@@ -98,14 +118,17 @@ const AdminDashboard = () => {
       </div>
 
       {/* Partners par app */}
-      {stats?.partnersByApp && (
+      {stats?.partnersByApp && Object.keys(stats.partnersByApp).some(app => stats.partnersByApp[app].total > 0) && (
         <div style={{ marginTop: '1rem' }}>
           <h2 style={{ fontSize: '1.125rem', marginBottom: '1rem' }}>Répartition par application</h2>
           <div className={styles.statsGrid}>
-            {Object.entries(stats.partnersByApp).map(([app, data]) => (
-              <div key={app} className={styles.statCard}>
-                <div className={styles.statValue}>{data.active}/{data.total}</div>
-                <div className={styles.statLabel}>{app} (actifs/total)</div>
+            {Object.entries(stats.partnersByApp)
+              .filter(([, data]) => data.total > 0)
+              .map(([app, data]) => (
+              <div key={app} className={styles.statCard} style={{ borderLeft: `3px solid ${APP_COLORS[app] || '#888'}` }}>
+                <div className={styles.statValue}>{data.active}<span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>/{data.total}</span></div>
+                <div className={styles.statLabel}>{APP_LABELS[app] || app}</div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>actifs / total</div>
               </div>
             ))}
           </div>

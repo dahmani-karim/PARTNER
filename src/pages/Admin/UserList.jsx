@@ -1,9 +1,72 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Shield, ShieldOff, Crown, Star } from 'lucide-react';
+import { Search } from 'lucide-react';
 import api from '../../services/api';
 import styles from './Admin.module.scss';
 import userStyles from './UserManagement.module.scss';
+
+const PREMIUM_APPS = [
+  { key: 'premiumSmartcellar', label: 'SC' },
+  { key: 'premiumProgarden',   label: 'PG' },
+  { key: 'premiumFarmly',      label: 'FL' },
+  { key: 'premiumLynx',        label: 'LX' },
+  { key: 'premiumPrete',       label: 'PT' },
+  { key: 'premiumHerbogenius', label: 'HG' },
+];
+
+const VIP_APPS = [
+  { key: 'vipSmartcellar', label: 'SC' },
+  { key: 'vipProgarden',   label: 'PG' },
+  { key: 'vipFarmly',      label: 'FL' },
+  { key: 'vipLynx',        label: 'LX' },
+];
+
+function SubscriptionCell({ u }) {
+  const activeVip     = VIP_APPS.filter(a => u[a.key]);
+  const activePremium = PREMIUM_APPS.filter(a => u[a.key]);
+
+  if (u.isPartner) {
+    return (
+      <div className={userStyles.subCell}>
+        <span className={userStyles.badgePartner}>🤝 Partner</span>
+        {activePremium.length > 0 && (
+          <div className={userStyles.appChips}>
+            {activePremium.map(a => <span key={a.key} className={userStyles.chipPremium}>{a.label}</span>)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (activeVip.length > 0) {
+    return (
+      <div className={userStyles.subCell}>
+        <span className={userStyles.badgeVip}>👑 VIP</span>
+        <div className={userStyles.appChips}>
+          {activeVip.map(a => <span key={a.key} className={userStyles.chipVip}>{a.label}</span>)}
+        </div>
+        {activePremium.length > 0 && (
+          <div className={userStyles.appChips}>
+            {activePremium.map(a => <span key={a.key} className={userStyles.chipPremium}>{a.label}</span>)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (activePremium.length > 0) {
+    return (
+      <div className={userStyles.subCell}>
+        <span className={userStyles.badgePremium}>🌟 Premium</span>
+        <div className={userStyles.appChips}>
+          {activePremium.map(a => <span key={a.key} className={userStyles.chipPremium}>{a.label}</span>)}
+        </div>
+      </div>
+    );
+  }
+
+  return <span className={userStyles.badgeFreemium}>Freemium</span>;
+}
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -87,10 +150,7 @@ const UserList = () => {
                     </div>
                   </td>
                   <td>
-                    <div className={userStyles.badges}>
-                      {u.isPremium && <span className={userStyles.badgePremium}><Crown size={12} /> Premium</span>}
-                      {u.isVIP && <span className={userStyles.badgeVip}><Star size={12} /> VIP</span>}
-                    </div>
+                    <SubscriptionCell u={u} />
                   </td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                     {u.createdAt ? new Date(u.createdAt).toLocaleDateString('fr-FR') : '—'}

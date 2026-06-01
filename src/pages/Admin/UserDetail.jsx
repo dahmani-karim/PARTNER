@@ -11,8 +11,16 @@ const APP_LABELS = {
   farmly: '🐔 Farmly',
   prete: '🏠 PRETE',
   lynx: '🎵 LYNX',
+  herbogenius: '🌿 HerboGenius',
+  primal: '💪 PRIMAL',
   partner: '🤝 Partner',
 };
+
+// Apps ayant un champ premiumXxx dans le schéma user
+const PREMIUM_APPS = ['smartcellar', 'progarden', 'farmly', 'lynx', 'prete', 'herbogenius'];
+
+// Apps ayant un champ vipXxx dans le schéma user (4 seulement — pas de vipPrete ni vipHerbogenius)
+const VIP_APPS = ['smartcellar', 'progarden', 'farmly', 'lynx'];
 
 const UserDetail = () => {
   const { id } = useParams();
@@ -75,10 +83,22 @@ const UserDetail = () => {
     }
   };
 
+  // Toggle par app (envoie { app } dans le body, pas dans l'URL)
+  const handleAppToggle = async (type, app) => {
+    setActionLoading(true);
+    try {
+      await api.put(`/api/admin/users/${id}/toggle-${type}-app`, { app });
+      fetchUser();
+    } catch (err) {
+      console.error(`Erreur toggle ${type}-app ${app}:`, err);
+      alert('Erreur: ' + (err.response?.data?.error?.message || err.message));
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   if (loading) return <div className={styles.adminPage}><p style={{ textAlign: 'center', padding: '2rem' }}>Chargement...</p></div>;
   if (!user) return <div className={styles.adminPage}><p style={{ textAlign: 'center', padding: '2rem' }}>Utilisateur non trouvé</p></div>;
-
-  const vipApps = ['smartcellar', 'progarden', 'farmly', 'prete', 'lynx'];
 
   return (
     <div className={styles.adminPage}>
@@ -94,8 +114,9 @@ const UserDetail = () => {
           <p className={userStyles.userEmail}>{user.email}</p>
           <div className={userStyles.badges} style={{ marginTop: '0.5rem' }}>
             {user.blocked ? <span className={userStyles.badgeBlocked}>Bloqué</span> : <span className={userStyles.badgeActive}>Actif</span>}
-            {user.isPremium && <span className={userStyles.badgePremium}><Crown size={12} /> Premium</span>}
-            {user.isVIP && <span className={userStyles.badgeVip}><Star size={12} /> VIP</span>}
+            {user.isPremium && <span className={userStyles.badgePremium}><Crown size={12} /> Premium (global)</span>}
+            {user.isVIP && <span className={userStyles.badgeVip}><Star size={12} /> VIP (global)</span>}
+            {user.isPartner && <span className={userStyles.badgePremium}>🤝 Partner</span>}
           </div>
         </div>
       </div>
@@ -125,22 +146,49 @@ const UserDetail = () => {
         </div>
       </div>
 
+      <div className={userStyles.section}>
+        <h2 className={userStyles.sectionTitle}>🌟 Premium par application</h2>
+        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.75rem' }}>
+          Accès Premium accordé par abonnement ou via le programme Partner. Contrôle les fonctionnalités payantes de chaque app.
+        </p>
+        <div className={userStyles.vipGrid}>
+          {PREMIUM_APPS.map((app) => {
+            const field = `premium${app.charAt(0).toUpperCase() + app.slice(1)}`;
+            const isActive = user[field];
+            return (
+              <button
+                key={app}
+                className={`${userStyles.vipChip} ${isActive ? userStyles.vipActive : ''}`}
+                onClick={() => handleAppToggle('premium', app)}
+                disabled={actionLoading}
+              >
+                {APP_LABELS[app] || app}
+                <span>{isActive ? '✓ actif' : '✗'}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* VIP par app */}
       <div className={userStyles.section}>
-        <h2 className={userStyles.sectionTitle}>VIP par application</h2>
+        <h2 className={userStyles.sectionTitle}>👑 VIP par application</h2>
+        <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.75rem' }}>
+          Accordé manuellement par un administrateur. Offre des avantages supplémentaires au-delà du Premium.
+        </p>
         <div className={userStyles.vipGrid}>
-          {vipApps.map((app) => {
+          {VIP_APPS.map((app) => {
             const field = `vip${app.charAt(0).toUpperCase() + app.slice(1)}`;
             const isActive = user[field];
             return (
               <button
                 key={app}
                 className={`${userStyles.vipChip} ${isActive ? userStyles.vipActive : ''}`}
-                onClick={() => handleToggle(`toggle-vip-app/${app}`)}
+                onClick={() => handleAppToggle('vip', app)}
                 disabled={actionLoading}
               >
                 {APP_LABELS[app] || app}
-                <span>{isActive ? '✓' : '✗'}</span>
+                <span>{isActive ? '✓ actif' : '✗'}</span>
               </button>
             );
           })}
