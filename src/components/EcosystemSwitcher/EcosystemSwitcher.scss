@@ -1,0 +1,235 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// App-switcher — habillage commun.
+//
+// Tout passe par des variables CSS, avec des valeurs de repli claires. Une
+// application à thème sombre (LYNX) n'a qu'à redéfinir ces variables sur
+// `:root` ou sur un conteneur parent ; le composant n'est jamais modifié.
+//
+//   --eco-surface   fond du panneau
+//   --eco-border    filets et contours
+//   --eco-text      texte principal
+//   --eco-muted     texte secondaire, points du bouton
+//   --eco-hover     survol d'une application
+//   --eco-radius    rayon des angles
+//   --eco-shadow    ombre portée du panneau
+// ─────────────────────────────────────────────────────────────────────────────
+
+.eco-switcher {
+  position: relative;
+  display: inline-flex;
+
+  &__btn {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--eco-radius, 10px);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover,
+    &--active {
+      background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+      border-color: var(--eco-border, rgba(0, 0, 0, 0.08));
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--eco-muted, #6b7280);
+      outline-offset: 2px;
+    }
+  }
+
+  &__dots {
+    display: grid;
+    grid-template-columns: repeat(3, 4px);
+    gap: 3px;
+
+    span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--eco-muted, #6b7280);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 1200;
+    width: 320px;
+    padding: 0.85rem;
+    border: 1px solid var(--eco-border, rgba(0, 0, 0, 0.08));
+    border-radius: calc(var(--eco-radius, 10px) + 4px);
+    background: var(--eco-surface, #ffffff);
+    box-shadow: var(--eco-shadow, 0 12px 32px rgba(0, 0, 0, 0.14));
+    animation: eco-switcher-in 0.14s ease-out;
+  }
+
+  &__label {
+    margin: 0 0 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--eco-muted, #6b7280);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.3rem;
+  }
+
+  &__hint {
+    margin: 0.6rem 0;
+    color: var(--eco-muted, #6b7280);
+    font-size: 0.7rem;
+    line-height: 1.4;
+  }
+
+  &__app {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.6rem 0.25rem;
+    border-radius: var(--eco-radius, 10px);
+    text-decoration: none;
+    color: var(--eco-text, #111827);
+    transition: background 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+      background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+      transform: translateY(-1px);
+    }
+
+    &--current {
+      background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+      cursor: default;
+
+      &:hover { transform: none; }
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+
+      &:hover {
+        background: none;
+        transform: none;
+      }
+
+      .eco-switcher__app-icon {
+        background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+        color: var(--eco-muted, #6b7280);
+      }
+    }
+  }
+
+  &__app-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: calc(var(--eco-radius, 10px) + 2px);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  &__app-name {
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__tag {
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--eco-muted, #6b7280);
+  }
+
+  &__home {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.55rem 0.6rem;
+    border-top: 1px solid var(--eco-border, rgba(0, 0, 0, 0.08));
+    text-decoration: none;
+    color: var(--eco-muted, #6b7280);
+    font-size: 0.78rem;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+      color: var(--eco-text, #111827);
+    }
+  }
+
+  &__home-name {
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__home-desc {
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    opacity: 0.7;
+  }
+
+  &__socials {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.1rem 0 0.15rem;
+  }
+
+  &__social {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--eco-radius, 10px);
+    color: var(--eco-muted, #6b7280);
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+      background: var(--eco-hover, rgba(0, 0, 0, 0.05));
+      transform: translateY(-1px);
+    }
+
+    &--youtube:hover { color: #FF0000; }
+    &--tiktok:hover  { color: #EE1D52; }
+    &--discord:hover { color: #5865F2; }
+  }
+}
+
+@keyframes eco-switcher-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 420px) {
+  .eco-switcher__dropdown {
+    position: fixed;
+    top: 64px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+}

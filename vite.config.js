@@ -3,16 +3,22 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  define: {
+    'import.meta.env.VITE_PWA_BUILD': JSON.stringify(new Date().toISOString()),
+  },
   base: '/',
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['favicon.svg'],
       devOptions: {
         enabled: false
       },
       manifest: {
+        id: '/',
+        launch_handler: { client_mode: 'navigate-existing' },
         name: 'Partner - La Caverne du Réfractaire',
         short_name: 'Partner',
         description: 'Programme Ambassadeur de La Caverne du Réfractaire',
@@ -34,14 +40,16 @@ export default defineConfig({
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'pwa-maskable-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
           }
         ]
       },
       workbox: {
+        skipWaiting: false,
+        clientsClaim: true,
         importScripts: ['push-sw.js'],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [

@@ -1,0 +1,93 @@
+.cavern-pwa {
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.cavern-pwa .cavern-pwa__dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  box-sizing: border-box;
+  padding: 32px;
+  border: 1px solid #d5d9df;
+  border-radius: 20px;
+  background: #fff;
+  color: #17212f;
+  text-align: center;
+  box-shadow: 0 20px 70px #0005;
+}
+.cavern-pwa__dialog::backdrop { background: #070d19a6; }
+.cavern-pwa h2 { font-size: 1.35rem; margin: 12px 0; color: inherit; }
+.cavern-pwa p { margin: 12px 0; color: inherit; }
+.cavern-pwa button {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 4px;
+  white-space: normal;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.cavern-pwa .cavern-pwa__primary {
+  background: var(--pwa-accent);
+  color: #fff;
+  border: 2px solid transparent;
+}
+.cavern-pwa .cavern-pwa__secondary {
+  background: #f0f3f7;
+  color: #17212f;
+  border: 1px solid #c9cfd9;
+}
+.cavern-pwa button:disabled { opacity: .6; cursor: wait; }
+.cavern-pwa button:focus-visible { outline: 3px solid #2463eb; outline-offset: 3px; }
+.cavern-pwa .cavern-pwa__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 10px;
+  border: 0;
+  background: transparent;
+  color: #17212f;
+  font-size: 24px;
+}
+.cavern-pwa__icon { display: block; object-fit: contain; margin: 0 auto 16px; }
+.cavern-pwa__instructions { text-align: left; padding: 12px; background: #f0f3f7; border-radius: 10px; }
+.cavern-pwa .cavern-pwa__update {
+  position: fixed;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  right: 16px;
+  z-index: 9990;
+  width: min(380px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #c9cfd9;
+  background: #fff;
+  color: #17212f;
+  box-shadow: 0 8px 40px #0004;
+}
+.cavern-pwa.cavern-pwa__settings {
+  display: block;
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #c9cfd9;
+  border-radius: 16px;
+  background: #fff;
+  color: #17212f;
+  overflow-wrap: anywhere;
+}
+.cavern-pwa [role="alert"] { color: #a11b27; }
+@media (prefers-color-scheme: dark) {
+  .cavern-pwa .cavern-pwa__dialog,
+  .cavern-pwa .cavern-pwa__update,
+  .cavern-pwa.cavern-pwa__settings { background: #17212f; color: #f0f3f7; border-color: #596475; }
+  .cavern-pwa .cavern-pwa__close { color: #f0f3f7; }
+  .cavern-pwa__instructions { background: #263345; }
+  .cavern-pwa [role="alert"] { color: #ffb4bc; }
+}

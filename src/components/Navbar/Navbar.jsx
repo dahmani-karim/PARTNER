@@ -3,6 +3,7 @@ import { LayoutDashboard, FileVideo, Send, User, Shield, Bell, LogOut, Menu, X }
 import { useState } from 'react';
 import useAuthStore from '../../stores/authStore';
 import styles from './Navbar.module.scss';
+import EcosystemSwitcher from '../EcosystemSwitcher/EcosystemSwitcher';
 
 const Navbar = () => {
   const user = useAuthStore((s) => s.user);
@@ -62,6 +63,7 @@ const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
+          <EcosystemSwitcher />
           <button className={styles.logoutBtn} onClick={handleLogout}>
             <LogOut size={16} />
             <span className={styles.label}>Déconnexion</span>

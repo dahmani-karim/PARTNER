@@ -6,6 +6,7 @@ import { APPS, PLATFORMS } from '../../config/apps';
 import { EcosystemPush } from '../../services/EcosystemPushService';
 import { API_URL } from '../../config/api';
 import styles from './Profile.module.scss';
+import { PwaSettings } from '../../pwa/PwaExperience';
 
 const Profile = () => {
   const user = useAuthStore((s) => s.user);
@@ -36,6 +37,8 @@ const Profile = () => {
       <div className={styles.header}>
         <h1>Mon profil</h1>
       </div>
+
+      <PwaSettings />
 
       {/* Informations utilisateur */}
       <div className={styles.card}>
