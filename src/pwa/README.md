@@ -1,5 +1,20 @@
 # PWA de l'ecosysteme
 
+## Identite visuelle Partner
+
+Les PNG `public/pwa-192x192.png` et `public/pwa-512x512.png` reprennent
+le logo existant de la navbar : carre arrondi, degrade dore et lettre P
+en Inter gras. Le rendu 512 px est celui du logo CSS 32 px agrandi 16 fois
+(rayon 128 px, police 224 px, hauteur de ligne 1.6).
+Les coins exterieurs au carre arrondi sont transparents, sans fond blanc.
+La variante maskable centre ce rendu reduit a 320 px sur un fond dore 512 px.
+Ces icones sont utilisees par le manifeste, l'installation et ses instructions.
+Le favicon reutilise directement le PNG 192 px transparent.
+La navbar reste inchangee.
+
+Le rafraichissement de l'icone du lanceur Android depend de Chrome/WebAPK
+et peut etre differe apres la mise a jour du contenu de l'application.
+
 Les fichiers `runtime.js`, `PwaExperience.jsx`, `pwa.css` et les tests `.mjs`
 sont communs aux sept applications. Seul `config.js` varie par application.
 Conserver ces fichiers communs identiques lors des prochaines modifications.
