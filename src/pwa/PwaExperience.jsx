@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { pwaConfig } from './config';
 import {
-  subscribe, getSnapshot, isIOS, isAuthRoute, reminderDue,
+  subscribe, getSnapshot, isIOS, isAndroid, canInviteInstall,
   openInstall, closeInstall, install, checkForUpdate, applyUpdate,
 } from './runtime';
 import './pwa.css';
@@ -13,6 +13,7 @@ const messages = {
     install: "Installer l'application", later: 'Plus tard', close: 'Fermer',
     installed: 'Application installée dans ce navigateur', help: "Installation et aide",
     ios: "Sur iPhone ou iPad, ouvrez cette page dans Safari, touchez Partager, puis « Sur l'écran d'accueil » et confirmez Ajouter.",
+    android: "Dans Chrome, ouvrez le menu ⋮ en haut à droite, puis touchez « Installer l'application » ou « Ajouter à l'écran d'accueil ». Si vous êtes dans une autre application, ouvrez d'abord ce site dans Chrome.",
     manual: "Si votre navigateur le propose, utilisez son menu « Installer l'application » ou « Ajouter à l'écran d'accueil ». Sinon, ouvrez ce site dans un navigateur compatible, par exemple Chrome ou Edge sur Android ou ordinateur.",
     readyTitle: 'Une mise à jour est prête', readyText: "Elle sera appliquée uniquement lorsque vous le déciderez.",
     update: 'Mettre à jour', confirm: "L'application va se recharger. Enregistrez vos saisies et terminez toute activité en cours avant de continuer.",
@@ -39,6 +40,7 @@ const messages = {
     install: 'Install application', later: 'Later', close: 'Close',
     installed: 'Application installed in this browser', help: 'Installation and help',
     ios: 'On iPhone or iPad, open this page in Safari, tap Share, then Add to Home Screen and confirm Add.',
+    android: 'In Chrome, open the ⋮ menu at the top right, then tap Install app or Add to Home Screen. If you are inside another app, open this site in Chrome first.',
     manual: 'If available, use Install app or Add to Home Screen in your browser menu. Otherwise, open this site in a compatible browser, such as Chrome or Edge on Android or desktop.',
     readyTitle: 'An update is ready', readyText: 'It will only be applied when you choose.',
     update: 'Update now', confirm: 'The application will reload. Save your changes and finish any current activity before continuing.',
@@ -79,19 +81,15 @@ export default function PwaExperience({ language }) {
   const state = usePwa(language);
   const { text } = state;
   const dialog = useRef(null);
-  const [route, setRoute] = useState(window.location.hash);
   const [hiddenUpdate, setHiddenUpdate] = useState(false);
   useEffect(() => {
-    const changed = () => setRoute(window.location.hash);
-    window.addEventListener('hashchange', changed);
-    return () => window.removeEventListener('hashchange', changed);
-  }, []);
-  useEffect(() => {
-    if (state.installed || isAuthRoute() || (!state.canPrompt && !isIOS()) || !reminderDue()) return;
-    const timer = setTimeout(openInstall, 5000);
+    if (!canInviteInstall()) return;
+    const timer = setTimeout(() => {
+      if (canInviteInstall()) openInstall();
+    }, 5000);
     return () => clearTimeout(timer);
-  }, [state.installed, state.canPrompt, route]);
-  const visible = state.installOpen && !state.installed && !isAuthRoute();
+  }, [state.installed, state.canPrompt, state.installOpen, state.installAccepted]);
+  const visible = state.installOpen && !state.installed;
   useEffect(() => {
     if (visible && !dialog.current.open) dialog.current.showModal();
     else if (!visible && dialog.current.open) dialog.current.close();
@@ -107,7 +105,7 @@ export default function PwaExperience({ language }) {
         <p>{text.description}</p>
         {state.canPrompt
           ? <button type="button" className="cavern-pwa__primary" onClick={install}>{text.install}</button>
-          : <p className="cavern-pwa__instructions">{isIOS() ? text.ios : text.manual}</p>}
+          : <p className="cavern-pwa__instructions">{isIOS() ? text.ios : isAndroid() ? text.android : text.manual}</p>}
         {state.error && <p role="alert">{text[state.error]}</p>}
         <button type="button" className="cavern-pwa__secondary" onClick={closeInstall}>{text.later}</button>
       </dialog>

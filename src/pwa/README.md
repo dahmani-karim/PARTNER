@@ -8,9 +8,18 @@ Conserver ces fichiers communs identiques lors des prochaines modifications.
 - Installation native quand le navigateur la propose ; aide Safari/iOS ou
   instructions manuelles sinon. Une fenetre standalone n'est pas une preuve
   permettant de detecter les installations dans d'autres contextes.
-- Invitation automatique apres 5 secondes, hors pages d'authentification.
+- Invitation automatique apres 5 secondes, y compris sur la connexion et
+  l'inscription. La navigation entre pages ne remet pas ce delai a zero.
+  Le bouton natif est affiche uniquement apres `beforeinstallprompt`.
+  Sur Android et iOS, si cet evenement n'est pas disponible, le pop-up donne
+  les instructions du navigateur, sans simuler un bouton d'installation.
   « Plus tard » differe l'invitation de 7 jours. L'aide reste accessible depuis
   les parametres ou le profil.
+- Une invitation acceptee ne reapparait pas dans la meme page pendant que
+  Chrome termine l'installation. Aucune invitation en mode standalone.
+  Dans un onglet ordinaire, le navigateur ne permet pas de garantir qu'une
+  application n'est pas deja installee : l'aide Android peut donc etre
+  proposee meme si une installation existe dans un autre contexte.
 - Verification au chargement par l'inscription native, au retour au premier
   plan, au retour en ligne et chaque heure si l'app est visible. Les
   verifications automatiques sont espacees d'au moins 5 minutes.

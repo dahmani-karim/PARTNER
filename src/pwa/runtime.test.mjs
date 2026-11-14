@@ -139,14 +139,51 @@ test('installation errors are surfaced without declaring success', async () => {
   assert.equal(env.api.getSnapshot().installed, false);
 });
 
-test('login, register, forgot and reset routes are excluded from invitations', async () => {
+test('a native install invitation is available on landing and authentication routes', async () => {
   const env = await setup();
-  for (const route of ['/login', '/register', '/forgot-password', '/reset-password?code=test']) {
+  env.window.emit('beforeinstallprompt', { preventDefault() {} });
+  for (const route of ['/', '/login', '/register', '/forgot-password', '/reset-password?code=test']) {
     env.window.location.hash = `#${route}`;
-    assert.equal(env.api.isAuthRoute(), true);
+    assert.equal(env.api.canInviteInstall(), true, route);
   }
-  env.window.location.hash = '#/settings';
-  assert.equal(env.api.isAuthRoute(), false);
+});
+
+test('Android offers installation instructions even when Chrome withholds the native event', async () => {
+  const env = await setup();
+  assert.equal(env.api.canInviteInstall(), false);
+  env.navigator.userAgent = 'Mozilla/5.0 (Linux; Android 14) Chrome/130 Mobile Safari/537.36';
+  assert.equal(env.api.canInviteInstall(), true);
+  assert.equal(env.api.getSnapshot().canPrompt, false);
+  env.api.openInstall();
+  assert.equal(env.api.canInviteInstall(), false);
+  env.api.closeInstall();
+  assert.equal(env.api.canInviteInstall(), false);
+  env.advance(7 * 86400000);
+  assert.equal(env.api.canInviteInstall(), true);
+  env.window.emit('appinstalled');
+  assert.equal(env.api.canInviteInstall(), false);
+});
+
+test('accepted installation does not reopen the Android invitation before appinstalled', async () => {
+  const env = await setup();
+  env.navigator.userAgent = 'Android';
+  env.window.emit('beforeinstallprompt', {
+    preventDefault() {}, prompt: async () => {},
+    userChoice: Promise.resolve({ outcome: 'accepted' }),
+  });
+  await env.api.install();
+  assert.equal(env.api.getSnapshot().installAccepted, true);
+  assert.equal(env.api.getSnapshot().installed, false);
+  assert.equal(env.api.canInviteInstall(), false);
+});
+
+test('standalone mode never automatically invites installation', async () => {
+  const env = await setup();
+  env.navigator.userAgent = 'Android';
+  env.window.matchMedia().matches = true;
+  env.window.matchMedia().emit('change');
+  env.window.emit('beforeinstallprompt', { preventDefault() {} });
+  assert.equal(env.api.canInviteInstall(), false);
 });
 
 test('a waiting worker never activates or reloads without a user action', async () => {

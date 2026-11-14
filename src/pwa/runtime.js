@@ -5,6 +5,7 @@ const reminderKey = `${pwaConfig.id}:pwa-install-reminder`;
 const standalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 let state = {
   installed: standalone(),
+  installAccepted: false,
   canPrompt: false,
   installOpen: false,
   ready: false,
@@ -29,7 +30,12 @@ export const subscribe = (listener) => {
 export const getSnapshot = () => state;
 export const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent)
   || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-export const isAuthRoute = () => /^\/(?:login|register|forgot-password|reset-password)(?:[/?]|$)/.test(window.location.hash.slice(1));
+export const isAndroid = () => /Android/i.test(navigator.userAgent);
+
+export function canInviteInstall() {
+  return !state.installed && !state.installAccepted && !state.installOpen
+    && (state.canPrompt || isIOS() || isAndroid()) && reminderDue();
+}
 
 export function reminderDue(now = Date.now()) {
   try {
@@ -66,7 +72,7 @@ export async function install() {
   try {
     await event.prompt();
     const { outcome } = await event.userChoice;
-    if (outcome === 'accepted') publish({ installOpen: false });
+    if (outcome === 'accepted') publish({ installOpen: false, installAccepted: true });
     else closeInstall();
   } catch (error) {
     console.error('[PWA] Installation failed', error);
