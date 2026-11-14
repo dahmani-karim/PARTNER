@@ -1,5 +1,13 @@
 # PARTNER — Programme Ambassadeur
 
+## Mot de passe oublie
+
+Le lien de connexion ouvre `/forgot-password`. La demande utilise le backend
+configure pour l'application, sans envoyer de JWT ni modifier la session.
+Strapi envoie le modele d'e-mail commun et le lien vers
+`https://smartcellar.lacavernedurefractaire.fr/#/reset-password`.
+Le mot de passe est commun aux applications, pas au compte du site officiel.
+
 Plateforme de gestion du programme ambassadeur de [La Caverne du Réfractaire](https://lacavernedurefractaire.fr).
 
 Les partners sélectionnés créent du contenu vidéo promouvant les applications de l'écosystème en échange d'un accès premium gratuit.

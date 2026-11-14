@@ -76,6 +76,7 @@ function App() {
         {/* Routes publiques */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+        <Route path="/forgot-password" element={<Login key="recovery" recovery />} />
 
         {/* Routes protégées avec Layout */}
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
