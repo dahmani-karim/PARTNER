@@ -1,4 +1,5 @@
 export default {
+  'Soumettre': 'Submit',
   'Fermer le menu': 'Close menu',
   'L’application PARTNER est diffusée par GitHub Pages et utilise le backend commun hébergé sur Render.': 'The PARTNER application is delivered by GitHub Pages and uses the shared backend hosted on Render.',
   '<strong>Frontend :</strong> GitHub Pages — GitHub, Inc.<br/>88 Colin P. Kelly Jr. Street<br/>San Francisco, CA 94107, États-Unis<br/>Site web : <a>https://pages.github.com</a>': '<strong>Frontend:</strong> GitHub Pages — GitHub, Inc.<br/>88 Colin P. Kelly Jr. Street<br/>San Francisco, CA 94107, United States<br/>Website: <a>https://pages.github.com</a>',

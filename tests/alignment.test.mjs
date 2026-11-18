@@ -60,6 +60,16 @@ test('PARTNER has no pricing, checkout or referral surface and keeps programme r
   assert.doesNotMatch(await source('pages/About/Terms.jsx'), /préparation physique|séances|abonnement.*proposés par/i);
 });
 
+test('mobile menu button precedes the brand on the left and submission label is translated', async () => {
+  const header = await source('components/Navbar/Navbar.jsx');
+  const css = await source('components/Navbar/Navbar.module.scss');
+  assert.ok(header.indexOf('<button ref={menuButton}') < header.indexOf('className={styles.brand}'));
+  assert.equal((header.match(/ref=\{menuButton\}/g) || []).length, 1);
+  assert.match(css, /inset: var\(--navbar-height\) auto 0 0/);
+  assert.match(header, /t\(label\)/);
+  assert.equal(translate('Soumettre'), 'Submit');
+});
+
 test('old programme requests cannot repopulate another session and latest filter wins', async () => {
   const first = deferred();
   const store = await partnerStore({ getMyApplication: () => first.promise });

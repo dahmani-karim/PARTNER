@@ -47,13 +47,13 @@ export default function Navbar() {
   </>;
   return <>
     <header className={styles.navbar}>
+      <button ref={menuButton} type="button" className={styles.mobileMenu} aria-label={t('Menu')} aria-controls="partner-sidebar" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
+        {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
       <NavLink to="/dashboard" className={styles.brand}><div className={styles.logo}>P</div><span>Partner</span></NavLink>
       <div className={styles.actions}>
         <EcosystemSwitcher />
         <UserMenu user={user} avatarUrl={avatarUrl} items={items} onLogout={logout} logoutLabel={t('Déconnexion')} />
-        <button ref={menuButton} type="button" className={styles.mobileMenu} aria-label={t('Menu')} aria-controls="partner-sidebar" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
       </div>
     </header>
     {mobileOpen && <button type="button" className={styles.backdrop} aria-label={t('Fermer le menu')} onClick={() => setMobileOpen(false)} />}

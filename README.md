@@ -23,7 +23,8 @@ du seul dossier affiche dans le navigateur.
 - Menu avatar : profil commun editable, partenariat, parametres et administration
   pour le compte administrateur. Aucun point d'entree de parrainage.
 - Navigation connectee en sidebar, avec le selecteur de langue en bas.
-  Sur mobile, le bouton menu ouvre le volet ; Echap ou le fond le referment.
+  Sur mobile, le bouton menu et le volet sont a gauche ; Echap ou le fond
+  referment le volet.
 - Profil : informations communes, avatar et consultation des droits de
   l'ecosysteme. Les notifications et informations ambassadeur restent dans
   « Mon partenariat ».
