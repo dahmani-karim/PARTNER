@@ -1,0 +1,1 @@
+import{u as i,j as n,L as s}from"./index-B2i8v6o_.js";/* empty css                           */function o(){const{t:a}=i();return n.jsx(s,{className:"admin-back-link",to:"/admin","aria-label":a("Administration"),children:"◀️"})}export{o as A};
