@@ -1,8 +1,11 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const backend = (env.VITE_API_URL || 'https://smart-cellar-api.onrender.com').replace(/\/+$/, '').replace(/\/api$/, '');
+  return {
   define: {
     'import.meta.env.VITE_PWA_BUILD': JSON.stringify(new Date().toISOString()),
   },
@@ -52,21 +55,15 @@ export default defineConfig({
         clientsClaim: true,
         importScripts: ['push-sw.js'],
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/smart-cellar-api\.onrender\.com\/api\//,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 300 },
-            },
-          },
-        ],
       },
     }),
   ],
   server: {
     port: 5173,
-    open: true,
+    proxy: {
+      '/api': { target: backend, changeOrigin: true, secure: true },
+      '/uploads': { target: backend, changeOrigin: true, secure: true },
+    },
   },
+  };
 })

@@ -1,0 +1,17 @@
+.quota-settings {
+  width: 100%; max-width: 1000px; margin: 0 auto; padding: 1.5rem; overflow-wrap: anywhere;
+  > p { margin: 1rem 0; }
+  h1 { font-size: 1.75rem; } h2 { margin: 0 0 1rem; }
+  section { border: 1px solid #d5d9e3; border-radius: 12px; padding: 1rem; margin: 1rem 0; background: white; color: #24292f; }
+  fieldset { border: 0; padding: 0; min-width: 0; }
+  .quota-resource { display: flex; flex-wrap: wrap; gap: 1rem; border-top: 1px solid #ddd; padding: 1rem 0; }
+  legend { font-weight: 600; }
+  label { display: flex; flex-direction: column; gap: .4rem; margin: .4rem 0; }
+  input[type=number] { width: 100%; max-width: 220px; padding: .6rem; border: 1px solid #aaa; border-radius: 6px; }
+  .quota-unlimited { flex-direction: row; align-items: center; }
+  button { padding: .65rem 1rem; margin: .3rem .6rem .3rem 0; border-radius: 8px; border: 1px solid #bbb; cursor: pointer; white-space: normal; }
+  button[type=submit] { background: #5665bd; color: white; border-color: #5665bd; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  [role=alert] { color: #a32132; } [role=status] { color: #247044; }
+  @media(max-width: 480px) { padding: 1rem .75rem; }
+}

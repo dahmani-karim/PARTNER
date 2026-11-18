@@ -1,18 +1,4 @@
-const getApiUrl = () => {
-  const hostname = window.location.hostname;
+const configuredOrigin = (import.meta.env.VITE_API_URL || 'https://smart-cellar-api.onrender.com')
+  .replace(/\/+$/, '').replace(/\/api$/, '');
 
-  // Custom domain → API custom domain
-  if (hostname === 'partner.lacavernedurefractaire.fr') {
-    return 'https://smartcellarapi.lacavernedurefractaire.fr';
-  }
-
-  // GitHub Pages fallback
-  if (hostname === 'dahmani-karim.github.io') {
-    return 'https://smart-cellar-api.onrender.com';
-  }
-
-  // Dev / fallback
-  return import.meta.env.VITE_API_URL || 'http://localhost:1337';
-};
-
-export const API_URL = getApiUrl();
+export const API_URL = import.meta.env.DEV ? '' : configuredOrigin;

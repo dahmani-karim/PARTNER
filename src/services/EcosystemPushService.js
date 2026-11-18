@@ -94,7 +94,7 @@ export class EcosystemPush {
       await subscription.unsubscribe();
 
       const token = this.getToken();
-      await fetch(`${this.apiBase}/api/push-subscription/unsubscribe`, {
+      const response = await fetch(`${this.apiBase}/api/push-subscription/unsubscribe`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -102,6 +102,7 @@ export class EcosystemPush {
         },
         body: JSON.stringify({ endpoint: subscription.endpoint, app: this.app }),
       });
+      if (!response.ok) throw new Error(`Erreur unsubscribe: ${response.status}`);
     }
     return true;
   }
@@ -109,13 +110,9 @@ export class EcosystemPush {
   // ─── Check subscription status ────────────────────────────
 
   async isSubscribed() {
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      return !!subscription;
-    } catch {
-      return false;
-    }
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    return !!subscription;
   }
 
   // ─── Send test notification ───────────────────────────────

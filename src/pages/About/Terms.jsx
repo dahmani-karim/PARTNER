@@ -1,0 +1,69 @@
+import { Link, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '../../i18n';
+import './About.scss';
+
+const CONDITIONS = [
+  ['1. Objet et gratuité', [
+    'PARTNER est le programme ambassadeur de La Caverne du Réfractaire. La candidature et les outils de suivi sont gratuits. Aucun abonnement ni paiement n’est demandé pour utiliser PARTNER.',
+    'Le compte applications est commun aux applications de l’écosystème. Il est distinct du compte du site officiel.',
+  ]],
+  ['2. Candidature et sélection', [
+    'Une candidature indique l’application souhaitée, la plateforme, le profil social et la motivation. Son dépôt ne garantit pas une acceptation : l’administration examine le dossier selon les places disponibles et les critères du programme.',
+    'Les informations transmises doivent être exactes. L’utilisateur reste responsable de son compte et de la confidentialité de ses identifiants.',
+  ]],
+  ['3. Publications et validation', [
+    'L’ambassadeur publie sur ses plateformes sociales, puis soumet les liens de ses vidéos pour validation. Le contenu doit respecter les droits des tiers, les règles de la plateforme et les obligations de transparence applicables aux contenus promotionnels.',
+    'Les objectifs de publication sont définis par application et présentés dans le tableau de bord. L’administration peut accepter ou refuser les publications et ajouter une note de validation.',
+    'Les vidéos restent hébergées sur les plateformes d’origine. PARTNER enregistre les liens et les informations de suivi, sans transférer la propriété des créations.',
+  ]],
+  ['4. Statut et accès offerts', [
+    'Un statut ambassadeur actif ou en avertissement peut ouvrir des accès Premium offerts selon les droits confirmés par le backend commun. Un accès offert n’est pas un abonnement et ne crée aucun prélèvement.',
+    'Le non-respect des conditions peut entraîner un avertissement, une suspension ou une révocation du statut. Les abonnements payants éventuellement souscrits séparément ne sont pas résiliés par ces changements.',
+  ]],
+  ['5. Utilisation et responsabilité', [
+    'Il est interdit d’utiliser PARTNER à des fins illégales, d’usurper une identité, de tenter d’accéder aux comptes d’autrui ou de soumettre des contenus portant atteinte aux droits de tiers.',
+    'Le service dépend d’une connexion Internet et des plateformes tierces. Des interruptions peuvent survenir, notamment pour maintenance. L’utilisateur conserve ses contenus originaux et vérifie les informations soumises.',
+    'La structure, le design et les éléments de marque de PARTNER restent la propriété de leurs titulaires. Les informations et liens soumis sont utilisés pour gérer et évaluer le partenariat.',
+  ]],
+  ['6. Compte, contact et droit applicable', [
+    'La désactivation bloque le compte commun sur toutes les applications, sans effacement automatique des données ni résiliation des abonnements externes. Pour demander un effacement ou contester une décision, contactez le support.',
+    'Les présentes conditions sont soumises au droit français. Pour toute question ou difficulté, un échange amiable peut être engagé auprès de La Caverne du Réfractaire.',
+  ]],
+];
+const PRIVACY = [
+  ['Responsable du traitement', [
+    'La Caverne du Réfractaire est responsable des traitements nécessaires au fonctionnement du compte commun et du programme ambassadeur. Contact : contact@lacavernedurefractaire.fr.',
+  ]],
+  ['Données traitées et finalités', [
+    'Le service traite les informations du compte et du profil commun, les candidatures, les profils sociaux, les liens vidéo et leurs métadonnées, les statuts, les objectifs et les notes de validation.',
+    'Ces données servent à authentifier les utilisateurs, examiner les candidatures, gérer les publications et les accès offerts, communiquer les décisions et assurer la sécurité du service.',
+    'Les traitements nécessaires au programme reposent sur son exécution ; la sécurité repose sur l’intérêt légitime de l’éditeur. Les notifications push facultatives nécessitent l’autorisation du navigateur et peuvent être désactivées.',
+  ]],
+  ['Hébergement et destinataires', [
+    'Le frontend est diffusé par GitHub Pages et le backend commun est hébergé sur Render. Les données du programme sont accessibles aux personnes autorisées à l’administrer et aux prestataires techniques nécessaires au service.',
+    'Les liens sociaux renvoient à des plateformes tierces qui appliquent leurs propres politiques. Les vidéos ne sont pas hébergées par PARTNER. Les données ne sont pas vendues.',
+  ]],
+  ['Stockage local et conservation', [
+    'Le navigateur conserve les éléments de session, la préférence de langue et les ressources nécessaires à l’application installable. Le cache métier est vidé à la déconnexion ; les réponses API authentifiées ne sont pas mises en cache par le service worker.',
+    'Les données du programme sont conservées pour les besoins de son suivi et les obligations applicables. Une désactivation ne vaut pas demande d’effacement : contactez le support pour exercer vos droits.',
+  ]],
+  ['Vos droits', [
+    'Vous pouvez demander l’accès, la rectification, l’effacement, la limitation ou la portabilité de vos données et exercer votre droit d’opposition selon les conditions légales. Adressez votre demande à contact@lacavernedurefractaire.fr.',
+    'Vous pouvez également adresser une réclamation à la CNIL (www.cnil.fr).',
+  ]],
+];
+export default function Terms() {
+  const { t } = useTranslation();
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'rgpd' ? 'rgpd' : 'cgu';
+  return <div className="terms-page"><div className="terms-container">
+    <header className="terms-header"><h1>{t('Conditions & Confidentialité')}</h1><p>{t('Programme ambassadeur gratuit et protection de vos données.')}</p></header>
+    <nav className="terms-tabs" aria-label={t('Documents')}>
+      {[['cgu', 'Conditions du programme'], ['rgpd', 'Confidentialité']].map(([key, title]) =>
+        <button type="button" className={`terms-tab ${tab === key ? 'active' : ''}`} key={key} aria-pressed={tab === key} onClick={() => setParams({ tab: key })}>{t(title)}</button>)}
+    </nav>
+    <section className="terms-section">{(tab === 'rgpd' ? PRIVACY : CONDITIONS).map(([title, paragraphs]) =>
+      <article className="terms-article" key={title}><h2>{t(title)}</h2>{paragraphs.map(text => <p key={text}>{t(text)}</p>)}</article>)}</section>
+    <footer className="terms-footer"><a href="mailto:contact@lacavernedurefractaire.fr">{t('Contact')}</a> · <Link to="/about">{t('À propos')}</Link></footer>
+  </div></div>;
+}

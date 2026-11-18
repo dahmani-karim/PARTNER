@@ -3,13 +3,14 @@ import { API_URL } from '../config/api';
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
+  timeout: 60000,
 });
 
 // Request interceptor: ajouter le JWT
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('partner-token');
-  if (token) {
+  const anonymous = /\/auth\/local(?:\/register)?$/.test(config.url);
+  if (token && !anonymous) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -19,10 +20,9 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('partner-token');
-      localStorage.removeItem('partner-user');
-      window.location.hash = '#/login';
+    const token = localStorage.getItem('partner-token');
+    if (token && error.response?.status === 401 && error.config?.headers?.Authorization === `Bearer ${token}`) {
+      window.dispatchEvent(new CustomEvent('partner-session-expired', { detail: { token } }));
     }
     return Promise.reject(error);
   }

@@ -1,4 +1,8 @@
 // Push notification handler — Ecosystem shared
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.delete('api-cache'));
+});
+
 self.addEventListener('push', (event) => {
   if (!event.data) return;
 

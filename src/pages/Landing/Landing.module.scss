@@ -1,5 +1,7 @@
 @use '../../styles/variables.scss' as *;
 
+.language { display: flex; justify-content: flex-end; padding: 1rem 1.5rem; }
+
 .landing {
   min-height: 100vh;
   background: var(--color-background);

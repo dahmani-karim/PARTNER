@@ -2,177 +2,72 @@ import { create } from 'zustand';
 import { partnerService } from '../services/partnerService';
 import { videoService } from '../services/videoService';
 
-const usePartnerStore = create((set, get) => ({
-  // Partner data
-  application: null,
-  partner: null,
-  videos: [],
-  weeklyCount: null,
-  configs: [],
-
-  // Admin data
-  stats: null,
-  allApplications: [],
-  allPartners: [],
-  allVideos: [],
-
-  // UI state
-  loading: false,
-  error: null,
-
-  // === PARTNER ACTIONS ===
-
-  loadMyData: async () => {
-    set({ loading: true, error: null });
+const emptyData = () => ({
+  application: null, partner: null, videos: [], weeklyCount: null, configs: [],
+  stats: null, allApplications: [], allPartners: [], allVideos: [],
+  errors: {}, pending: 0, loading: false, ready: false, error: null,
+});
+const usePartnerStore = create((set, get) => {
+  let generation = 0;
+  const requests = new Map();
+  const run = async (key, request, apply, propagate = false) => {
+    const owner = generation;
+    const requestId = (requests.get(key) || 0) + 1;
+    requests.set(key, requestId);
+    set(state => ({ pending: state.pending + 1, loading: true, error: null,
+      errors: { ...state.errors, [key]: null } }));
     try {
-      const [application, partner] = await Promise.all([
-        partnerService.getMyApplication(),
-        partnerService.getMyPartner(),
-      ]);
-      set({ application, partner, loading: false });
-
-      // Si partner actif, charger les vidéos et le compteur
-      if (partner && ['active', 'warning'].includes(partner.status)) {
-        get().loadMyVideos();
-        get().loadWeeklyCount();
+      const result = await request();
+      if (generation !== owner) throw new Error('La session a changé. Rechargez la page.');
+      if (apply && requests.get(key) === requestId) set(apply(result));
+      return result;
+    } catch (error) {
+      console.error(`PARTNER ${key} failed`, error);
+      if (generation === owner && requests.get(key) === requestId) {
+        const message = error.response?.data?.error?.message || error.message;
+        set(state => ({ error: message, errors: { ...state.errors, [key]: message } }));
       }
-    } catch (err) {
-      set({ loading: false, error: err.message });
+      if (propagate) throw error;
+    } finally {
+      if (generation === owner) set(state => ({ pending: state.pending - 1, loading: state.pending > 1 }));
     }
-  },
-
-  loadMyVideos: async () => {
-    try {
-      const videos = await videoService.getMyVideos();
-      set({ videos });
-    } catch (err) {
-      console.error('Erreur chargement vidéos:', err);
-    }
-  },
-
-  loadWeeklyCount: async () => {
-    try {
-      const weeklyCount = await videoService.getWeeklyCount();
-      set({ weeklyCount });
-    } catch (err) {
-      console.error('Erreur chargement compteur:', err);
-    }
-  },
-
-  submitApplication: async (data) => {
-    set({ loading: true, error: null });
-    try {
-      const application = await partnerService.apply(data);
-      set({ application, loading: false });
-      return application;
-    } catch (err) {
-      const msg = err.response?.data?.error?.message || 'Erreur lors de la candidature';
-      set({ loading: false, error: msg });
-      throw err;
-    }
-  },
-
-  submitVideo: async (data) => {
-    set({ loading: true, error: null });
-    try {
-      const video = await videoService.submit(data);
-      set((state) => ({
-        videos: [video, ...state.videos],
-        loading: false,
-      }));
-      get().loadWeeklyCount();
+  };
+  const list = (key, request) => run(key, async () => {
+    const data = await request();
+    if (!Array.isArray(data)) throw new Error('Réponse de liste invalide.');
+    return data;
+  }, data => ({ [key]: data }));
+  return {
+    ...emptyData(),
+    reset: () => { generation++; set(emptyData()); },
+    loadMyData: async () => {
+      const result = await run('myData', async () => {
+        const [application, partner] = await Promise.all([partnerService.getMyApplication(), partnerService.getMyPartner()]);
+        return { application, partner };
+      }, data => ({ ...data, ready: true }));
+      if (result?.partner && ['active', 'warning'].includes(result.partner.status)) {
+        await Promise.all([get().loadMyVideos(), get().loadWeeklyCount()]);
+      }
+    },
+    loadMyVideos: () => list('videos', () => videoService.getMyVideos()),
+    loadWeeklyCount: () => run('weeklyCount', () => videoService.getWeeklyCount(), weeklyCount => ({ weeklyCount })),
+    loadConfigs: () => list('configs', () => partnerService.getConfigs()),
+    submitApplication: data => run('application', () => partnerService.apply(data), application => ({ application }), true),
+    submitVideo: async data => {
+      const video = await run('submitVideo', () => videoService.submit(data),
+        video => ({ videos: [video, ...get().videos] }), true);
+      await get().loadWeeklyCount();
       return video;
-    } catch (err) {
-      const msg = err.response?.data?.error?.message || 'Erreur lors de la soumission';
-      set({ loading: false, error: msg });
-      throw err;
-    }
-  },
-
-  loadConfigs: async () => {
-    try {
-      const configs = await partnerService.getConfigs();
-      set({ configs });
-    } catch (err) {
-      console.error('Erreur chargement configs:', err);
-    }
-  },
-
-  // === ADMIN ACTIONS ===
-
-  loadStats: async () => {
-    try {
-      const stats = await partnerService.getStats();
-      set({ stats });
-    } catch (err) {
-      console.error('Erreur chargement stats:', err);
-    }
-  },
-
-  loadAllApplications: async (filters) => {
-    set({ loading: true });
-    try {
-      const allApplications = await partnerService.listApplications(filters);
-      set({ allApplications, loading: false });
-    } catch (err) {
-      set({ loading: false });
-    }
-  },
-
-  reviewApplication: async (id, body) => {
-    try {
-      await partnerService.reviewApplication(id, body);
-      get().loadAllApplications();
-      get().loadStats();
-    } catch (err) {
-      console.error('Erreur review:', err);
-      throw err;
-    }
-  },
-
-  loadAllPartners: async (filters) => {
-    set({ loading: true });
-    try {
-      const allPartners = await partnerService.listPartners(filters);
-      set({ allPartners, loading: false });
-    } catch (err) {
-      set({ loading: false });
-    }
-  },
-
-  updatePartnerStatus: async (id, body) => {
-    try {
-      await partnerService.updatePartnerStatus(id, body);
-      get().loadAllPartners();
-      get().loadStats();
-    } catch (err) {
-      console.error('Erreur update status:', err);
-      throw err;
-    }
-  },
-
-  loadAllVideos: async (filters) => {
-    set({ loading: true });
-    try {
-      const allVideos = await videoService.listAll(filters);
-      set({ allVideos, loading: false });
-    } catch (err) {
-      set({ loading: false });
-    }
-  },
-
-  validateVideo: async (id, body) => {
-    try {
-      await videoService.validate(id, body);
-      get().loadAllVideos();
-      get().loadStats();
-    } catch (err) {
-      console.error('Erreur validation:', err);
-      throw err;
-    }
-  },
-
-  clearError: () => set({ error: null }),
-}));
+    },
+    loadStats: () => run('stats', () => partnerService.getStats(), stats => ({ stats })),
+    loadAllApplications: filters => list('allApplications', () => partnerService.listApplications(filters)),
+    loadAllPartners: filters => list('allPartners', () => partnerService.listPartners(filters)),
+    loadAllVideos: filters => list('allVideos', () => videoService.listAll(filters)),
+    reviewApplication: (id, body) => run('review', () => partnerService.reviewApplication(id, body), null, true),
+    updatePartnerStatus: (id, body) => run('partnerStatus', () => partnerService.updatePartnerStatus(id, body), null, true),
+    validateVideo: (id, body) => run('validation', () => videoService.validate(id, body), null, true),
+    clearError: () => set({ error: null }),
+  };
+});
 
 export default usePartnerStore;

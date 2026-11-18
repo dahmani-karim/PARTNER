@@ -1,0 +1,19 @@
+.account-page {
+  max-width: 900px; margin: 0 auto; padding: 1.5rem 0 4rem; line-height: 1.7;
+  h1 { margin-bottom: .75rem; }
+  h2 { font-size: 1.3rem; margin-bottom: .75rem; }
+  p { margin: .75rem 0; }
+  section, > form { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 1.5rem; margin: 1.5rem 0; }
+  fieldset { border: 0; min-width: 0; }
+  legend { font-weight: 700; margin-bottom: 1rem; }
+  label { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
+  input, textarea { width: 100%; padding: .8rem; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); font: inherit; }
+  textarea { min-height: 100px; resize: vertical; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  [role=alert] { color: #b91c1c; overflow-wrap: anywhere; }
+  [role=status] { color: #166534; }
+  a { color: var(--color-primary-dark); overflow-wrap: anywhere; }
+  .partner-btn { margin-top: .5rem; }
+}
+.account-avatar { width: 80px; height: 80px; object-fit: cover; border-radius: 50%; }
+.account-links { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }

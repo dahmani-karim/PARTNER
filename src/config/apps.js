@@ -10,7 +10,7 @@ export const APPS = {
   lynx: {
     id: 'lynx',
     name: 'LYNX',
-    description: 'Tracker de prix et alertes shopping intelligent',
+    description: 'Anticipation & alertes temps réel',
     url: 'https://lynx.lacavernedurefractaire.fr',
     color: '#6366F1',
     icon: '🔍',
@@ -26,7 +26,7 @@ export const APPS = {
   farmly: {
     id: 'farmly',
     name: 'Farmly',
-    description: 'Trouvez les producteurs locaux autour de vous',
+    description: 'Élevage & autosuffisance animale',
     url: 'https://farmly.lacavernedurefractaire.fr',
     color: '#F59E0B',
     icon: '🌾',

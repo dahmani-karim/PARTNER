@@ -1,0 +1,54 @@
+@use './UserManagement.scss';
+@use './UserDetail.scss';
+
+.admin-page.admin-page {
+  flex: 1 0 auto;
+  align-self: flex-start;
+  min-height: 100vh;
+  padding-top: 1.5rem;
+  padding-bottom: 6rem;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  &, * { box-sizing: border-box; }
+  h1, h2, h3, h4 { font-family: inherit; line-height: 1.6; }
+  button, input, select, textarea { font-family: Arial; line-height: normal; }
+  fieldset:disabled button { opacity: .5; cursor: not-allowed; }
+  .admin-back-link {
+    position: fixed; bottom: 20px; right: 20px; z-index: 10;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #2a7ff9; font-size: 1.8rem; padding: .5rem; border-radius: 50%;
+    background: rgba(42, 127, 249, .1); width: 50px; height: 50px;
+    margin: 20px auto; text-decoration: none; font-weight: 500; opacity: .8;
+    transition: all .3s ease;
+    &:hover { opacity: 1; background: rgba(42, 127, 249, .2); transform: translateX(-5px); }
+  }
+  @media(max-width: 480px) { padding-top: 1rem; }
+}
+.user-detail {
+  .info-section { color: #000; }
+  .info-section p { margin: 0; color: inherit; }
+  .stat-card .stat-value { color: white; }
+  .statistics-section .stat-label { color: white; margin: 0; letter-spacing: .5px; }
+  .statistics-section .stat-card { gap: 12px; border: 1px solid rgba(250,207,180,.1); cursor: pointer; }
+  .vip-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .vip-app-badge {
+    padding: 2px 8px; border-radius: 12px; font-size: .75rem; font-weight: 600;
+    background: rgba(255,255,255,.1); color: #667;
+    &.active { background: linear-gradient(135deg, #ff6b6b, #ff8e53); color: white; }
+  }
+  .push-state { color: #999; &.enabled { color: #4caf50; } }
+  .info-section.actions-section .action-buttons .vip-app-action { font-size: .85rem; }
+}
+.user-management__stats .stat-card { min-height: 120px; }
+.user-management__header, .user-management__summary, .user-management__filters > label,
+.user-detail__header h1 { color: var(--text-primary); }
+.user-management__header p { color: var(--text-secondary); }
+.user-detail .partner-management input, .user-detail .partner-management select,
+.user-detail .partner-management textarea { background: white; color: #24292f; }
+.quota-settings.admin-page > h1 { margin: 0 0 20px; }
+.push-notifications {
+  .notification-form, .notification-history { color: #000; }
+  .notification-form .form-group label { font-size: 1rem; }
+  p { margin: 0; }
+  .push-notifications__header p { color: var(--text-secondary); }
+}

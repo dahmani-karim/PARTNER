@@ -1,91 +1,65 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileVideo, Send, User, Shield, Bell, LogOut, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, FileVideo, Send, Menu, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import useAuthStore from '../../stores/authStore';
 import styles from './Navbar.module.scss';
 import EcosystemSwitcher from '../EcosystemSwitcher/EcosystemSwitcher';
+import UserMenu from '../UserMenu/UserMenu';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import { useTranslation } from '../../i18n';
 
-const Navbar = () => {
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-  const navigate = useNavigate();
+export default function Navbar() {
+  const { t } = useTranslation();
+  const user = useAuthStore(s => s.user);
+  const avatarUrl = useAuthStore(s => s.avatarUrl);
+  const logout = useAuthStore(s => s.logout);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
-  const isAdmin = Number(user?.id) === 1;
-
+  const location = useLocation();
+  const menuButton = useRef(null);
+  useEffect(() => setMobileOpen(false), [location.pathname, location.search]);
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const close = event => {
+      if (event.key === 'Escape') {
+        setMobileOpen(false);
+        menuButton.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', close);
+    return () => document.removeEventListener('keydown', close);
+  }, [mobileOpen]);
+  const items = [
+    { to: '/profile', label: 'Mon profil', icon: '👤' },
+    { to: '/profile/advanced', label: 'Mon partenariat', icon: '🤝' },
+    { to: '/settings', label: 'Paramètres', icon: '⚙️' },
+    ...(Number(user?.id) === 1 ? [{ to: '/admin', label: 'Administration', icon: '🛠️' }] : []),
+  ];
   const navItems = [
-    { to: '/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
-    { to: '/videos', icon: <FileVideo size={18} />, label: 'Vidéos' },
-    { to: '/videos/submit', icon: <Send size={18} />, label: 'Soumettre' },
-    { to: '/profile', icon: <User size={18} />, label: 'Profil' },
+    ['/dashboard', LayoutDashboard, 'Tableau de bord'],
+    ['/videos', FileVideo, 'Mes vidéos'],
+    ['/videos/submit', Send, 'Soumettre'],
   ];
-
-  const adminItems = [
-    { to: '/admin', icon: <Shield size={18} />, label: 'Admin' },
-    { to: '/admin/notifications', icon: <Bell size={18} />, label: 'Push' },
-  ];
-
-  const renderLinks = (items) =>
-    items.map(({ to, icon, label }) => (
-      <NavLink
-        key={to}
-        to={to}
-        className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
-        onClick={() => setMobileOpen(false)}
-        end={to === '/admin'}
-      >
-        {icon}
-        <span className={styles.label}>{label}</span>
-      </NavLink>
-    ));
-
-  return (
-    <>
-      <nav className={styles.navbar}>
-        <NavLink to="/dashboard" className={styles.brand}>
-          <div className={styles.logo}>P</div>
-          <span>Partner</span>
-        </NavLink>
-
-        <div className={styles.nav}>
-          {renderLinks(navItems)}
-          {isAdmin && (
-            <>
-              <span className={styles.adminBadge}>Admin</span>
-              {renderLinks(adminItems)}
-            </>
-          )}
-        </div>
-
-        <div className={styles.actions}>
-          <EcosystemSwitcher />
-          <button className={styles.logoutBtn} onClick={handleLogout}>
-            <LogOut size={16} />
-            <span className={styles.label}>Déconnexion</span>
-          </button>
-
-          <button
-            className={styles.mobileMenu}
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </nav>
-
-      {mobileOpen && (
-        <div className={styles.mobileNav}>
-          {renderLinks(navItems)}
-          {isAdmin && renderLinks(adminItems)}
-        </div>
-      )}
-    </>
-  );
-};
-
-export default Navbar;
+  const links = <>
+    {navItems.map(([to, Icon, label]) => <NavLink key={to} to={to} end className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`} onClick={() => setMobileOpen(false)}>
+      <Icon size={18} /><span className={styles.label}>{t(label)}</span>
+    </NavLink>)}
+    <NavLink to="/about" className={styles.navLink} onClick={() => setMobileOpen(false)}>{t('À propos')}</NavLink>
+  </>;
+  return <>
+    <header className={styles.navbar}>
+      <NavLink to="/dashboard" className={styles.brand}><div className={styles.logo}>P</div><span>Partner</span></NavLink>
+      <div className={styles.actions}>
+        <EcosystemSwitcher />
+        <UserMenu user={user} avatarUrl={avatarUrl} items={items} onLogout={logout} logoutLabel={t('Déconnexion')} />
+        <button ref={menuButton} type="button" className={styles.mobileMenu} aria-label={t('Menu')} aria-controls="partner-sidebar" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </div>
+    </header>
+    {mobileOpen && <button type="button" className={styles.backdrop} aria-label={t('Fermer le menu')} onClick={() => setMobileOpen(false)} />}
+    <aside id="partner-sidebar" className={`${styles.sidebar} ${mobileOpen ? styles.open : ''}`}>
+      <nav className={styles.nav} aria-label={t('Navigation principale')}>{links}</nav>
+      <div className={styles.sidebarFooter}><LanguageSwitcher /></div>
+    </aside>
+  </>;
+}
